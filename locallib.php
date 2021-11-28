@@ -28,7 +28,6 @@ global $CFG;
 require_once($CFG->libdir . '/validateurlsyntax.php');
 
 define('REPORT_CUSTOMSQL_LIMIT_EXCEEDED_MARKER', '-- ROW LIMIT EXCEEDED --');
-define('REPORT_CUSTOMSQL_TOKEN_VALID_DURATION', 3600);
 define('REPORT_CUSTOMSQL_DEFAULT_DATAFORMAT', 'csv');
 
 function report_customsql_execute_query($sql, $params = null, $limitnum = null) {

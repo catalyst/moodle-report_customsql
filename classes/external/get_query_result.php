@@ -47,12 +47,12 @@ class get_query_result extends \external_api {
      * @throws \required_capability_exception
      * @throws \restricted_context_exception
      */
-    public static function execute(int $id, string $queryparams = '', string $dataformat, int $tokenexpiry = 3600): array {
+    public static function execute(int $id, string $queryparams = '', string $dataformat): array {
         global $CFG, $DB, $USER;
 
         $params = self::validate_parameters(
             self::execute_parameters(),
-            compact('id', 'queryparams', 'dataformat', 'tokenexpiry')
+            compact('id', 'queryparams', 'dataformat')
         );
         $context = \context_system::instance();
         self::validate_context($context);
@@ -66,17 +66,14 @@ class get_query_result extends \external_api {
             require_capability($report->capability, $context);
         }
 
-        $usertokenexpiry = time();
-        if ($tokenexpiry === null) {
-            $usertokenexpiry += REPORT_CUSTOMSQL_TOKEN_VALID_DURATION;
-        } else {
-            $usertokenexpiry += $tokenexpiry;
-        }
+        // Use the same restrictions for the user token as the WS token being used.
+        $wstoken = optional_param('wstoken', '', PARAM_ALPHANUM);
+        $wstokenrec = $DB->get_record('external_tokens', ['token' => $wstoken]);
 
-        $token = get_user_key('report_customsql', $USER->id, $id, null, $usertokenexpiry);
+        $usertoken = get_user_key('report_customsql', $USER->id, $id, $wstokenrec->iprestriction, $wstokenrec->validuntil);
         $urlparams = [
             'id' => $id,
-            'token' => $token,
+            'token' => $usertoken,
             'dataformat' => $dataformat,
         ];
         if (!empty($queryparams)) {
@@ -97,8 +94,6 @@ class get_query_result extends \external_api {
                 'queryparams' => new \external_value(PARAM_RAW, 'Query params in JSON format', VALUE_DEFAULT, '', NULL_ALLOWED),
                 'dataformat' => new \external_value(PARAM_RAW, 'The data format', VALUE_DEFAULT,
                                                     REPORT_CUSTOMSQL_DEFAULT_DATAFORMAT),
-                'tokenexpiry' => new \external_value(PARAM_INT, 'Expiry of the token in seconds', VALUE_DEFAULT,
-                                                     3600, NULL_ALLOWED),
         ]);
     }
 
