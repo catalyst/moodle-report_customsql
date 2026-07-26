@@ -57,7 +57,7 @@ class renderer extends plugin_renderer_base {
         $backtocategoryaction = $this->action_link(
                 report_customsql_url('category.php', ['id' => $category->id]),
                 $this->pix_icon('t/left', '') .
-                get_string('backtocategory', 'report_customsql', $category->name));
+                get_string('backtocategory', 'report_customsql', format_string($category->name)));
 
         $context = [
                 'editaction' => $editaction,
