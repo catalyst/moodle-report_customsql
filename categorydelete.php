@@ -57,7 +57,7 @@ if (optional_param('confirm', false, PARAM_BOOL)) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('deletecategoryareyousure', 'report_customsql'));
-echo html_writer::tag('p', get_string('categorynamex', 'report_customsql', $category->name ));
+echo html_writer::tag('p', get_string('categorynamex', 'report_customsql', format_string($category->name)));
 echo $OUTPUT->confirm(get_string('deletecategoryyesno', 'report_customsql'),
              new single_button(report_customsql_url('categorydelete.php',
                      ['id' => $id, 'confirm' => 1, 'sesskey' => sesskey()]), get_string('yes')),
