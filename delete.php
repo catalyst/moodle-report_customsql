@@ -46,6 +46,7 @@ if ($returnurl) {
 }
 
 if (optional_param('confirm', false, PARAM_BOOL)) {
+    require_sesskey();
     $ok = $DB->delete_records('report_customsql_queries', ['id' => $id]);
     if (!$ok) {
         throw new moodle_exception('errordeletingreport', 'report_customsql', report_customsql_url('index.php'));
@@ -75,7 +76,8 @@ echo $OUTPUT->header().
 
      $OUTPUT->confirm(get_string('deleteareyousure', 'report_customsql'),
                       new single_button(report_customsql_url('delete.php',
-                                        ['id' => $id, 'confirm' => 1, 'returnurl' => $returnurl->out_as_local_url(false)]),
+                                        ['id' => $id, 'confirm' => 1, 'sesskey' => sesskey(),
+                                         'returnurl' => $returnurl->out_as_local_url(false)]),
                                         get_string('yes')),
                       new single_button($returnurl, get_string('no'))).
 
